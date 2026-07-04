@@ -179,7 +179,7 @@ const CARD_LIST = [
     id: "t6",
     name: "飄々とした態度",
     type: "tosser",
-    cost: 1,
+    cost: 0,
     desc: "HP(5×トサー値)回復",
     img: "/images/hyo.png",
     effect: (b, p) => {
@@ -300,10 +300,10 @@ const CARD_LIST = [
     id: "b2",
     name: "ブロック",
     type: "block",
-    cost: 1,
-    desc: "受けるダメージ-20",
+    cost: 0,
+    desc: "受けるダメージ-10(表記は20ですが10です)",
     img: "/images/block.png",
-    effect: (b, p) => (b[p].buffs.damageReduction += 20),
+    effect: (b, p) => (b[p].buffs.damageReduction += 10),
   },
   {
     id: "b3",
@@ -319,7 +319,7 @@ const CARD_LIST = [
     id: "sp1",
     name: "タイムアウト",
     type: "special",
-    cost: 1,
+    cost: 0,
     desc: "デッキからカードを2枚引く",
     img: "/images/timeo.png",
     effect: (b, p) => drawCard(b, p, 2),
@@ -367,7 +367,7 @@ const CARD_LIST = [
     id: "sp6",
     name: "ブロックサーチ",
     type: "special",
-    cost: 1,
+    cost: 0,
     desc: "デッキからブロックカードを1枚引く",
     img: "/images/bsearch.png",
     effect: (b, p) => {
@@ -379,7 +379,7 @@ const CARD_LIST = [
     id: "sp7",
     name: "アタックサーチ",
     type: "special",
-    cost: 1,
+    cost: 0,
     desc: "デッキからアタッカーカードを1枚引く",
     img: "/images/asearch.png",
     effect: (b, p) => {
@@ -391,7 +391,7 @@ const CARD_LIST = [
     id: "sp8",
     name: "トスサーチ",
     type: "special",
-    cost: 1,
+    cost: 0,
     desc: "デッキからトサーカードを1枚引く",
     img: "/images/tsearch.png",
     effect: (b, p) => {
@@ -403,7 +403,7 @@ const CARD_LIST = [
     id: "sp9",
     name: "サーブサーチ",
     type: "special",
-    cost: 1,
+    cost: 0,
     desc: "デッキからサーバーカードを1枚引く",
     img: "/images/ssearch.png",
     effect: (b, p) => {
@@ -415,7 +415,7 @@ const CARD_LIST = [
     id: "sp10",
     name: "同行【アカンパニー】",
     type: "special",
-    cost: 0,
+    cost: 1,
     desc: "墓地からランダムに1枚回収する",
     img: "/images/retrieve.png",
     effect: (b, p) => {
@@ -770,7 +770,7 @@ const CardUI = ({
                 relative bg-slate-900 rounded-lg border-2 border-slate-400 shadow-[0_8px_15px_rgba(0,0,0,0.6)] overflow-hidden select-none transition-all
                 ${
                   disabled
-                    ? "opacity-40 grayscale cursor-not-allowed"
+                    ? "brightness-50 cursor-not-allowed" 
                     : "cursor-grab touch-none"
                 }
                 ${
@@ -3276,7 +3276,7 @@ export default function App() {
                       (!isHost && battle.activePlayer !== "p2")
                     : battle.activePlayer !== "p1"
                 }
-                className="bg-transparent border-transparent"
+                className="transform -translate-y-1/2 font-black text-sm px-4 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-sm border shadow-lg z-50"
               >
                 PASS
               </button>
@@ -3382,7 +3382,7 @@ export default function App() {
             }`}
           >
             <div className="flex flex-col items-center gap-1 bg-slate-900/50 px-2 py-2 min-w-[50px] rounded-lg backdrop-blur-sm border border-slate-700">
-              <span className="text-green-400 font-black text-sm drop-shadow-md leading-none">
+              <span className="text-green-400 font-black text-[10px] drop-shadow-md leading-none">
                 HP {battle[pBot].hp}
               </span>
               <div className="flex flex-col-reverse gap-1">
