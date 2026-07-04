@@ -179,7 +179,7 @@ const CARD_LIST = [
     id: "t6",
     name: "飄々とした態度",
     type: "tosser",
-    cost: 0,
+    cost: 1,
     desc: "HP(5×トサー値)回復",
     img: "/images/hyo.png",
     effect: (b, p) => {
@@ -226,7 +226,7 @@ const CARD_LIST = [
     id: "s4",
     name: "サービスエース",
     type: "server",
-    cost: 2,
+    cost: 3,
     desc: "敵の攻撃を終了。サーバー値×5のダメージ。",
     img: "/images/ace.png",
     effect: (b, p, opp) => {
@@ -240,7 +240,7 @@ const CARD_LIST = [
     id: "s5",
     name: "速球",
     type: "server",
-    cost: 1,
+    cost: 2,
     desc: "相手にサーバーの能力値*10ダメージ",
     img: "/images/sok.png",
     effect: (b, p, opp) => {
@@ -254,7 +254,7 @@ const CARD_LIST = [
     name: "緩急",
     type: "server",
     cost: 1,
-    desc: "相手の手札をランダムに2枚破壊（表記は一枚だが二枚です）",
+    desc: "相手の手札をランダムに2枚破壊",
     img: "/images/sniper.png",
     effect: (b, p, opp) => {
       // 相手の手札の枚数と「2枚」を比べて、少ない方を破壊する回数にする
@@ -319,7 +319,7 @@ const CARD_LIST = [
     id: "sp1",
     name: "タイムアウト",
     type: "special",
-    cost: 0,
+    cost: 1,
     desc: "デッキからカードを2枚引く",
     img: "/images/timeo.png",
     effect: (b, p) => drawCard(b, p, 2),
@@ -344,7 +344,7 @@ const CARD_LIST = [
   },
   {
     id: "sp4",
-    name: "口撃",
+    name: "精神攻撃",
     type: "special",
     cost: 0,
     desc: "敵のHP-10",
@@ -358,8 +358,8 @@ const CARD_LIST = [
     id: "sp5",
     name: "落とさない気持ち",
     type: "special",
-    cost: 0,
-    desc: "使用マナを1だけ下げる(1フェーズのみ)",
+    cost: 1,
+    desc: "一ターンの間、使用マナを1だけ下げる",
     img: "/images/oto.png",
     effect: (b, p) => (b[p].buffs.manaDiscount += 1),
   },
@@ -427,7 +427,7 @@ const CARD_LIST = [
   },
   {
     id: "sp11",
-    name: "手札破壊",
+    name: "おろそかな足元",
     type: "special",
     cost: 0,
     desc: "相手の手札をランダムに1枚破壊",
@@ -446,7 +446,11 @@ const CARD_LIST = [
     cost: 2,
     desc: "このフェーズで2枚固有カードを使える",
     img: "/images/double.png",
-    effect: (b, p) => (b[p].buffs.doubleAction = true),
+    // ★ true ではなく、1（回数を追加）にする
+    // もし「このカード使用後、さらに2枚使える」にしたいなら 2 にしてください。
+    effect: (b, p) => {
+      b[p].buffs.doubleAction = 1; 
+    },
   },
   {
     id: "sp13",
@@ -845,56 +849,47 @@ function MenuScreen({
           {/* VS CPU: 左から右へ 白 → グレー(黒) のグラデーション */}
           <button
             onClick={onOpenCpuSelect}
-            className="w-full py-4 bg-gradient-to-r from-white/90 to-gray-500/50 backdrop-blur-md rounded-xl text-xl font-black shadow-lg border border-white/40 transition-all active:scale-95 text-slate-900"
+            className="w-full py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl text-xl font-black shadow-lg border border-white/40 transition-all active:scale-95 text-slate-900 flex items-center justify-center"
           >
-            CPU戦{" "}
-            <span className="text-xs font-bold block opacity-70">
-              ソロプレイ
-            </span>
+            CPU戦
           </button>
 
           {/* PVP: ★逆向き (右から左へ 白 → グレー) bg-gradient-to-l を使用 */}
           <button
             onClick={onOpenMatchmaking}
-            className="w-full py-4 bg-gradient-to-l from-white/90 to-gray-500/50 backdrop-blur-md rounded-xl text-xl font-black shadow-lg border border-white/40 transition-all active:scale-95 text-slate-900"
+            className="w-full py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl text-xl font-black shadow-lg border border-white/40 transition-all active:scale-95 text-slate-900"
           >
-            PVP{" "}
-            <span className="text-xs font-bold block opacity-70">
-              オンラインマッチ
-            </span>
+            PVP
           </button>
 
           {/* ENDLESS: 左から右へ 白 → グレー のグラデーション */}
           <button
             onClick={onSelectEndless}
-            className="w-full py-4 bg-gradient-to-r from-white/90 to-gray-500/50 backdrop-blur-md rounded-xl text-xl font-black shadow-lg border border-white/40 transition-all active:scale-95 text-slate-900"
+            className="w-full py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl text-xl font-black shadow-lg border border-white/40 transition-all active:scale-95 text-slate-900"
           >
-            ENDLESS MODE{" "}
-            <span className="text-xs font-bold block opacity-70">
-              ランキング
-            </span>
+            エンドレス
           </button>
         </div>
 
         {/* その他のメニュー (全体の統一感のために、こちらも半透明の白枠に変更しています) */}
         <div className="w-full max-w-md grid grid-cols-3 gap-3 mb-6">
-          <button
+        <button
             onClick={onShowRanking}
-            className="py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-sm sm:text-base font-black shadow-md border border-white/30 transition-all active:scale-95 text-white flex flex-col items-center justify-center"
+            className="py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-sm sm:text-base font-black shadow-md border border-white/30 transition-all active:scale-95 text-white flex items-center justify-center"
           >
-            <span className="text-xl mb-1">👑</span> Ranking
+            全国ランキング
           </button>
           <button
             onClick={onOpenDeck}
             className="py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-sm sm:text-base font-black shadow-md border border-white/30 transition-all active:scale-95 text-white flex flex-col items-center justify-center"
           >
-            <span className="text-xl mb-1">🃏</span> Deck
+            デッキ作成
           </button>
           <button
             onClick={onOpenRules}
             className="py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-sm sm:text-base font-black shadow-md border border-white/30 transition-all active:scale-95 text-white flex flex-col items-center justify-center"
           >
-            <span className="text-xl mb-1">📖</span> Rule
+            ？
           </button>
         </div>
 
@@ -1030,25 +1025,30 @@ function CpuSelectScreen({ onStart, onBack }) {
   const [level, setLevel] = useState(3);
   const [stage, setStage] = useState("balance");
 
+  // 1〜10の配列を用意
+  const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   return (
     <div className="w-full h-[100dvh] flex flex-col items-center justify-center bg-slate-950 p-6 space-y-6 relative">
       <h2 className="text-3xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300 tracking-widest drop-shadow-lg z-10">
         VS CPU
       </h2>
 
+      {/* CPUレベル選択エリア */}
       <div className="flex flex-col items-center bg-slate-900/50 p-4 rounded-xl border border-slate-700 shadow-md z-10 w-full max-w-sm">
         <span className="text-yellow-400 font-bold tracking-widest mb-3 text-sm">
           CPU LEVEL
         </span>
-        <div className="flex gap-2">
-          {[1, 2, 3, 4, 5].map((lv) => (
+        {/* ★変更ポイント: gridを使って 5列×2段 にする */}
+        <div className="grid grid-cols-5 gap-2 w-full">
+          {levels.map((lv) => (
             <button
               key={lv}
               onClick={() => setLevel(lv)}
-              className={`w-12 h-12 rounded-full font-black text-lg transition-colors ${
+              className={`h-12 w-full flex items-center justify-center rounded-lg font-black text-lg transition-all ${
                 level === lv
-                  ? "bg-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(250,204,21,0.8)]"
-                  : "bg-slate-800 text-slate-400 border border-slate-600"
+                  ? "bg-yellow-500 text-slate-900 shadow-[0_0_10px_rgba(250,204,21,0.8)] scale-105" // 選択中は少し大きく光る
+                  : "bg-slate-800 text-slate-400 border border-slate-600 hover:bg-slate-700 hover:text-slate-200"
               }`}
             >
               {lv}
@@ -1057,6 +1057,7 @@ function CpuSelectScreen({ onStart, onBack }) {
         </div>
       </div>
 
+      {/* ステージ(デッキ)選択エリア */}
       <div className="flex flex-col items-center bg-slate-900/50 p-4 rounded-xl border border-slate-700 shadow-md z-10 w-full max-w-sm">
         <span className="text-blue-300 font-bold tracking-widest mb-3 text-sm">
           STAGE (ENEMY DECK)
@@ -1069,7 +1070,7 @@ function CpuSelectScreen({ onStart, onBack }) {
               className={`py-3 px-2 rounded-lg font-black text-xs sm:text-sm transition-all border ${
                 stage === key
                   ? "bg-blue-600 text-white border-blue-400 shadow-[0_0_15px_rgba(37,99,235,0.6)]"
-                  : "bg-slate-800 text-slate-400 border-slate-600"
+                  : "bg-slate-800 text-slate-400 border-slate-600 hover:bg-slate-700"
               }`}
             >
               {CPU_STAGE_NAMES[key]}
@@ -1078,9 +1079,10 @@ function CpuSelectScreen({ onStart, onBack }) {
         </div>
       </div>
 
+      {/* ボタン類 */}
       <button
         onClick={() => onStart(level, stage)}
-        className="w-full max-w-sm px-6 py-4 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 rounded-xl text-xl font-black text-slate-900 shadow-lg border border-yellow-200 z-10 transition"
+        className="w-full max-w-sm px-6 py-4 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 rounded-xl text-xl font-black text-slate-900 shadow-lg border border-yellow-200 z-10 transition transform hover:scale-105 active:scale-95"
       >
         BATTLE START
       </button>
@@ -1094,16 +1096,39 @@ function CpuSelectScreen({ onStart, onBack }) {
   );
 }
 
-function ResultScreen({ data, onBack }) {
-  if (!data) return null;
+function ResultScreen({ data, onBack, onSubmitScore }) {
+  // 名前入力と送信状態を管理するState
+  const [playerName, setPlayerName] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  if (!data) {
+    return (
+      <div className="w-full h-[100dvh] flex items-center justify-center bg-slate-950 text-white text-2xl">
+        データを読み込み中、またはデータがありません...
+      </div>
+    );
+  }
+
   const isWin = data.winner === "p1";
+  const endlessLevel = data.endlessLevel || 1;
+
+  // 送信ボタンを押した時の処理
+  const handleSubmit = () => {
+    if (!playerName.trim() || isSubmitted) return;
+    
+    if (onSubmitScore) {
+      onSubmitScore(playerName, endlessLevel);
+      setIsSubmitted(true); // 送信済みにする
+    }
+  };
 
   return (
     <div className="w-full h-[100dvh] flex flex-col items-center justify-center bg-slate-950 p-6 relative">
       <div
         className="absolute inset-0 bg-cover opacity-20 mix-blend-overlay"
-        style={{ backgroundImage: `url(${ASSETS.bg})` }}
+        style={{ backgroundImage: `url(${ASSETS?.bg || ''})` }}
       ></div>
+      
       <div className="z-10 flex flex-col items-center space-y-8 animate-fadeIn">
         <h1
           className={`text-7xl sm:text-8xl font-black tracking-widest drop-shadow-[0_0_20px_rgba(0,0,0,0.8)] italic ${
@@ -1116,31 +1141,59 @@ function ResultScreen({ data, onBack }) {
         </h1>
 
         {data.mode === "endless" && (
-          <div className="text-2xl font-black text-slate-200 bg-slate-900/80 px-8 py-4 rounded-2xl border-2 border-slate-600 shadow-[0_10px_20px_rgba(0,0,0,0.5)] text-center">
-            {isWin && data.level === 10 ? (
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 animate-pulse block mb-2">
-                ENDLESS MODE COMPLETE!
-              </span>
-            ) : (
-              <span className="block mb-2">
-                Reached Level:{" "}
-                <span className="text-yellow-400 text-3xl">{data.level}</span>
-              </span>
-            )}
-            {!isWin && (
-              <span className="text-sm text-green-400">
-                ※ランキングに記録されました
-              </span>
-            )}
+          <div className="flex flex-col items-center space-y-6">
+            <div className="text-2xl font-black text-slate-200 bg-slate-900/80 px-8 py-4 rounded-2xl border-2 border-slate-600 shadow-[0_10px_20px_rgba(0,0,0,0.5)] text-center w-full max-w-md">
+              {isWin && endlessLevel === 15 ? (
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 animate-pulse block mb-2">
+                  ENDLESS MODE COMPLETE!
+                </span>
+              ) : (
+                <span className="block mb-2">
+                  Reached Level:{" "}
+                  <span className="text-yellow-400 text-3xl">{endlessLevel}</span>
+                </span>
+              )}
+            </div>
+
+            {/* ★ スコア送信UIエリア */}
+            <div className="bg-slate-800/90 p-6 rounded-xl border border-slate-600 w-full max-w-md flex flex-col items-center space-y-4 shadow-lg">
+              <h2 className="text-xl font-bold text-white">ランキングに登録</h2>
+              
+              {!isSubmitted ? (
+                <>
+                  <input
+                    type="text"
+                    maxLength={10}
+                    placeholder="名前を入力 (10文字以内)"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)}
+                    className="w-full px-4 py-2 bg-slate-900 border border-slate-500 rounded text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <button
+                    onClick={handleSubmit}
+                    disabled={!playerName.trim()}
+                    className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-600 text-white font-bold rounded transition-colors"
+                  >
+                    スコアを送信する
+                  </button>
+                </>
+              ) : (
+                <div className="text-green-400 font-bold text-lg animate-pulse">
+                  ※ランキングに記録されました！
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        <button
-          onClick={onBack}
-          className="mt-8 px-10 py-4 bg-gradient-to-r from-slate-200 to-white hover:bg-slate-300 text-slate-900 rounded-full font-black text-xl shadow-[0_10px_20px_rgba(255,255,255,0.3)] hover:scale-110 active:scale-95 transition-all"
-        >
-          タイトルへ戻る
-        </button>
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="mt-8 px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-full transition-colors border-2 border-slate-500"
+          >
+            タイトルへ戻る
+          </button>
+        )}
       </div>
     </div>
   );
@@ -1148,53 +1201,106 @@ function ResultScreen({ data, onBack }) {
 
 function RuleScreen({ onBack }) {
   return (
-    <div className="w-full h-[100dvh] bg-slate-950 p-6 overflow-y-auto flex flex-col text-slate-200">
-      <h2 className="text-3xl font-black text-yellow-400 mb-6 flex-shrink-0 border-b-2 border-slate-700 pb-2">
-        ルール説明
+    <div className="w-full h-[100dvh] bg-slate-950 p-4 sm:p-6 flex flex-col text-slate-200 relative">
+      
+      {/* タイトル */}
+      <h2 className="text-3xl font-black text-yellow-400 mb-4 flex-shrink-0 border-b-2 border-slate-700 pb-2">
+        📖 ルール説明
       </h2>
-      <div className="space-y-5 text-sm leading-relaxed flex-1">
-        <p className="bg-slate-900 p-4 rounded-lg border border-slate-700 shadow-md">
-          「蹴戯王SHU-GI-OH!」はセパタクローを題材にした1対1のターン制カードバトルです。
-          <br />
-          アタッカーの能力値×トサーの能力値が最終的な攻撃の値になります。
-          <br />
-          カードは「アタッカー固有カード」「トサー固有カード」「サーバー固有カード」「ブロックカード」「特殊カード」に分かれています。
-          <br />
-          デッキにはこれら一種類のカードにつき最大二枚までを入れて計20枚を入れたデッキを作ることが出来ます。また、デッキ作成時に「アタッカー」「トサー」「サーバー」の三人に合計１０の能力値を振り分けることが出来ます。
-          <br />
-          好きなビルドを組み他人を圧倒しましょう！
-          <br />
-          <strong className="text-red-400 text-base">
-            勝利条件: 相手のHP(150)を0にする。
-          </strong>
-        </p>
 
-        <p>
-          ・どちらのプレーヤーも、毎ターンマナが回復し、レシーブを受けるときにカードを一枚引きます。
-          <br />
-          ・サーブ権がある側(Serve)とレシーブ側(Toss/Attack)に分かれます。
-          <br />
-          ・サーブを打つプレイヤーはサーブを打つ前にサーバーの固有カードの使用を宣言することが出来ます。
-          <br />
-          ・レシーブを受ける側は、「トスフェーズ」「アタックフェーズ」どちらもにおいて、対応する固有カードの使用を宣言できます。
-          <br />
-          ・レシーブ側がすべてのカードの選択を終了したとき、サーブ側はブロックカードの使用を宣言できます。
-          <br />
-          ・最終的な数値の四則演算によりダメージが決定されます。
-          <br />
-          ※変なカードをたくさん入れたのでバグが見つかったら教えてください。
-          <br />
-        </p>
+      {/* スクロール可能なコンテンツエリア */}
+      <div className="space-y-6 text-sm sm:text-base leading-relaxed flex-1 overflow-y-auto pr-2 pb-4">
+        
+        {/* 1. 概要と勝利条件 */}
+        <section className="bg-slate-900/80 p-4 sm:p-5 rounded-xl border border-slate-700 shadow-md">
+          <h3 className="text-lg font-bold text-blue-400 mb-2 border-b border-slate-700 pb-1 flex items-center">
+            <span className="mr-2">⚽</span> ゲームの概要
+          </h3>
+          <p className="mb-4">
+            「蹴戯王SHU-GI-OH!」は、セパタクローを題材にした1対1のターン制カードバトルです。
+          </p>
+          <div className="bg-red-950/40 border border-red-800/50 p-3 rounded-lg flex items-center justify-center animate-pulse">
+            <strong className="text-red-400 text-lg sm:text-xl">
+              🏆 勝利条件: 相手のHP(150)を0にする
+            </strong>
+          </div>
+        </section>
+
+        {/* 2. デッキ構築と能力値 */}
+        <section className="bg-slate-900/80 p-4 sm:p-5 rounded-xl border border-slate-700 shadow-md">
+          <h3 className="text-lg font-bold text-green-400 mb-3 border-b border-slate-700 pb-1 flex items-center">
+            <span className="mr-2">🃏</span> デッキと能力値
+          </h3>
+          <ul className="space-y-3">
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">✔</span>
+              <div>
+                <strong className="text-yellow-300">デッキ構築:</strong> 計20枚<br />
+                <span className="text-slate-400 text-xs">（アタッカー/トサー/サーバー/ブロック/特殊カード。一つのカードにつき2枚まで）</span>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">✔</span>
+              <div>
+                <strong className="text-yellow-300">能力値の振り分け:</strong><br />
+                「アタッカー」「トサー」「サーバー」の3人に<strong className="text-white border-b border-white">合計10のステータス</strong>を自由に振り分け可能！
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">✔</span>
+              <div>
+                <strong className="text-yellow-300">攻撃力の計算:</strong><br />
+                アタッカー能力値 × トサー能力値 ＝ 最終攻撃力
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        {/* 3. ターンの流れ */}
+        <section className="bg-slate-900/80 p-4 sm:p-5 rounded-xl border border-slate-700 shadow-md">
+          <h3 className="text-lg font-bold text-purple-400 mb-2 border-b border-slate-700 pb-1 flex items-center">
+            <span className="mr-2">🔄</span> ターンの流れ
+          </h3>
+          <p className="text-slate-400 text-xs sm:text-sm mb-4">
+            ※毎ターンマナが回復し、レシーブを受ける時にカードを1枚引きます。
+          </p>
+          
+          <div className="space-y-3">
+            <div className="bg-slate-800 p-3 rounded-lg border-l-4 border-cyan-500">
+              <strong className="text-cyan-400 block mb-1">1. サーブ側 (Serve)</strong>
+              サーブを打つ前に「サーバー固有カード」の使用を宣言できます。
+            </div>
+            <div className="bg-slate-800 p-3 rounded-lg border-l-4 border-orange-500">
+              <strong className="text-orange-400 block mb-1">2. レシーブ側 (Toss / Attack)</strong>
+              トス・アタックの両フェーズで、それぞれ対応する「固有カード」の使用を宣言できます。
+            </div>
+            <div className="bg-slate-800 p-3 rounded-lg border-l-4 border-pink-500">
+              <strong className="text-pink-400 block mb-1">3. ブロック (Block)</strong>
+              レシーブ側がカード選択を終了した後、サーブ側は「ブロックカード」で防御できます。
+            </div>
+          </div>
+          <div className="mt-4 p-2 bg-slate-800/50 rounded text-center text-sm font-bold text-slate-300">
+            ▶ 最終的な数値の四則演算によりダメージが決定！
+          </div>
+        </section>
+
+        {/* 注意事項 */}
+        <section className="text-center text-slate-500 text-xs py-2">
+          ※変なカードをたくさん入れたので、バグが見つかったら教えてください
+        </section>
+
       </div>
+      
+      {/* 戻るボタン (下に固定配置) */}
       <button
         onClick={onBack}
-        className="mt-6 w-full py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-black text-white flex-shrink-0 shadow-lg border border-slate-500 transition active:scale-95"
+        className="mt-4 w-full py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-black text-white flex-shrink-0 shadow-lg border border-slate-500 transition active:scale-95 z-10"
       >
         戻る
       </button>
     </div>
   );
-}
+} // 必要に応じて
 
 function DeckBuildScreen({
   playerStats,
@@ -1725,6 +1831,30 @@ export default function App() {
     update(ref(db, `rooms/${roomId}`), { battle: cleanState });
   };
 
+  // ----------------------------------------------------
+  // ★ 追加：HPを監視して勝敗（次のステージ）を決めるレフェリー処理
+  // ----------------------------------------------------
+  useEffect(() => {
+    // バトルが始まっていない、または既に勝敗が決まっている場合は何もしない
+    if (!battle || battle.winner) return;
+
+    if (battle.p2.hp <= 0) {
+      // 敵のHPが0以下になったら「next_stage」状態にする！
+      // （これがトリガーとなって、先ほど作った1.5秒後のリセット処理が走ります）
+      setBattle((prev) => {
+        let nb = cloneBattle(prev);
+        nb.winner = "next_stage";
+        return nb;
+      });
+    } else if (battle.p1.hp <= 0) {
+      // プレイヤーのHPが0以下になったらゲームオーバー（敵の勝ち）
+      setBattle((prev) => {
+        let nb = cloneBattle(prev);
+        nb.winner = "p2";
+        return nb;
+      });
+    }
+  }, [battle?.p1.hp, battle?.p2.hp, battle?.winner]);
   // Firebase Listener for PvP
   useEffect(() => {
     if (mode === "pvp" && roomId && screen === "battle") {
@@ -1750,79 +1880,91 @@ export default function App() {
       card.cost - b[pKey].buffs.manaDiscount + (b[pKey].buffs.manaCostUp || 0)
     );
 
-  const canPlayCard = (b, pKey, card) => {
-    if (
-      !b ||
-      b.activePlayer !== pKey ||
-      startupPhase !== "ready" ||
-      b.seq !== "idle"
-    )
+    const canPlayCard = (b, pKey, card) => {
+      if (
+        !b ||
+        b.activePlayer !== pKey ||
+        startupPhase !== "ready" ||
+        b.seq !== "idle"
+      )
+        return false;      
+      if (b.winner) return false;
+      if (calculateCost(b, pKey, card) > b[pKey].mana) return false;
+  
+      // ★修正：特殊カード(special)なら無条件で使える(true)ように変更！
+      if (card.type === "special") return true;
+      
+      // ★ 修正：すでにカードを使っていて、かつ二回行動バフの残り回数がないなら使えない
+      if (b.usedCardThisPhase.specific && b[pKey].buffs.doubleAction <= 0) {
       return false;
-    if (calculateCost(b, pKey, card) > b[pKey].mana) return false;
-
-    if (card.type === "special") return !b.usedCardThisPhase.special;
-    if (b.usedCardThisPhase.specific && !b[pKey].buffs.doubleAction)
+      }
+  
+      if (b.currentPhase === "serve" && card.type === "server") return true;
+      if (b.currentPhase === "toss" && card.type === "tosser") return true;
+      if (b.currentPhase === "attack" && card.type === "attacker") return true;
+      if (b.currentPhase === "damageDeal" && card.type === "block") return true;
+  
       return false;
+    };
 
-    if (b.currentPhase === "serve" && card.type === "server") return true;
-    if (b.currentPhase === "toss" && card.type === "tosser") return true;
-    if (b.currentPhase === "attack" && card.type === "attacker") return true;
-    if (b.currentPhase === "damageDeal" && card.type === "block") return true;
-
-    return false;
-  };
-
-  const startActionSequence = (pKey, cardIndex) => {
-    let b = cloneBattle(battle);
-    let playedCard = null;
-
-    if (cardIndex !== null) {
-      playedCard = b[pKey].hand[cardIndex];
-      b[pKey].mana -= calculateCost(b, pKey, playedCard);
-      b[pKey].hand.splice(cardIndex, 1);
-      b[pKey].discard.push(playedCard);
-
-      if (playedCard.type === "special") {
-        b.usedCardThisPhase.special = true;
-        playedCard.effect(b, pKey, pKey === "p1" ? "p2" : "p1");
-        if (pKey === "p1") {
-          b.activeSpecialCard = playedCard;
-          setTimeout(
-            () => setBattle((prev) => ({ ...prev, activeSpecialCard: null })),
-            1500
-          );
-        }
-        setBattle(b);
-        syncBattleToFirebase(b);
-        return;
-      } else {
-        // ★ここを書き換え
-        if (b[pKey].buffs.doubleAction) {
-          b[pKey].buffs.doubleAction = false; // 二回行動バフを1回消費
+    const startActionSequence = (pKey, cardIndex) => {
+      let b = cloneBattle(battle);
+      let playedCard = null;
+  
+      if (cardIndex !== null) {
+        playedCard = b[pKey].hand[cardIndex];
+        b[pKey].mana -= calculateCost(b, pKey, playedCard);
+        b[pKey].hand.splice(cardIndex, 1);
+        b[pKey].discard.push(playedCard);
+  
+        if (playedCard.type === "special") {
+          // =========================================================
+          // 特殊カード（「二回行動」など）を使った時の処理
+          // ※ここではバフの消費はせず、効果（バフ付与など）だけを発動する
+          // =========================================================
+          playedCard.effect(b, pKey, pKey === "p1" ? "p2" : "p1");
+          if (pKey === "p1") {
+            b.activeSpecialCard = playedCard;
+            setTimeout(
+              () => setBattle((prev) => ({ ...prev, activeSpecialCard: null })),
+              1500
+            );
+          }
+          setBattle(b);
+          syncBattleToFirebase(b);
+          return;
         } else {
-          b.usedCardThisPhase.specific = true;
-        }
-        playedCard.effect(b, pKey, pKey === "p1" ? "p2" : "p1");
-        if (pKey === "p2") {
-          if (b.currentPhase === "toss") b.hiddenTossCard = playedCard;
-          if (b.currentPhase === "attack") b.hiddenAttackCard = playedCard;
+          // =========================================================
+          // 固有カード（攻撃など）を使った時の処理
+          // ★ ここでバフの消費、または使用済みフラグを立てる！
+          // =========================================================
+          if (b.usedCardThisPhase.specific && b[pKey].buffs.doubleAction > 0) {
+            b[pKey].buffs.doubleAction -= 1; // 二回行動バフを1回消費
+          } else {
+            b.usedCardThisPhase.specific = true; // 1枚目の使用フラグ
+          }
+  
+          playedCard.effect(b, pKey, pKey === "p1" ? "p2" : "p1");
+          if (pKey === "p2") {
+            if (b.currentPhase === "toss") b.hiddenTossCard = playedCard;
+            if (b.currentPhase === "attack") b.hiddenAttackCard = playedCard;
+          }
         }
       }
-    }
-
-    b.actionCard = playedCard;
-
-    if (b.currentPhase === "damageDeal") {
-      b.seq = playedCard ? "cutin_block" : "action_short";
-    } else if (pKey === "p2") {
-      b.seq = "enemy_action";
-    } else {
-      b.seq = playedCard ? "cutin" : "cutin_short";
-    }
-
-    setBattle(b);
-    syncBattleToFirebase(b);
-  };
+  
+      b.actionCard = playedCard;
+  
+      if (b.currentPhase === "damageDeal") {
+        b.seq = playedCard ? "cutin_block" : "action_short";
+      } else if (pKey === "p2") {
+        b.seq = "enemy_action";
+      } else {
+        b.seq = playedCard ? "cutin" : "cutin_short";
+      }
+  
+      setBattle(b);
+      syncBattleToFirebase(b);
+    };
 
   const processImpact = (b) => {
     if (b.currentPhase === "attack") {
@@ -1892,11 +2034,24 @@ export default function App() {
   };
 
   const handlePhaseEnd = (b) => {
+    if (b.p1.hp <= 0) {
+      b.winner = "p2";
+      return b; // HPが0なら、フェーズ進行を行わずにすぐ終わる
+    } else if (b.p2.hp <= 0) {
+      if (b.mode === "endless" && b.endlessLevel < 15) {
+        b.winner = "next_stage";
+      } else {
+        b.winner = "p1";
+      }
+      return b; // HPが0なら、フェーズ進行を行わずにすぐ終わる
+    }
+
+    if (b.winner) return b; // 念のためのストッパー
     b.usedCardThisPhase = { specific: false, special: false };
     b.p1.buffs.manaDiscount = 0;
     b.p2.buffs.manaDiscount = 0;
-    b.p1.buffs.doubleAction = false; // ★追加
-    b.p2.buffs.doubleAction = false; // ★追加
+    b.p1.buffs.doubleAction = 0; // ★追加
+    b.p2.buffs.doubleAction = 0; // ★追加
     const oppKey = b.serverSide === "p1" ? "p2" : "p1";
 
     if (b.currentPhase === "serve") {
@@ -1931,7 +2086,12 @@ export default function App() {
       b.p1.mana = Math.min(10, b.p1.mana + 1);
       b.p2.mana = Math.min(10, b.p2.mana + 1);
 
+      // ★★★ 追加：手札事故による無限ループを防ぐためのドロー ★★★
+      drawCard(b, b.activePlayer, 1);
+      // ★★★ ここまで ★★★
+
       if (b.p1.buffs.burn) {
+        // ...既存の処理が続く...
         b.p1.hp -= 5;
         b.damageText = { val: 5, pos: "bottom", msg: "BURN!" };
         b.shake = true;
@@ -1958,17 +2118,7 @@ export default function App() {
       setTimeLeft(180);
     }
 
-    b.phaseTextKey = Math.random();
-
-    if (b.p1.hp <= 0) {
-      b.winner = "p2";
-    } else if (b.p2.hp <= 0) {
-      if (b.mode === "endless" && b.endlessLevel < 10) {
-        b.winner = "next_stage";
-      } else {
-        b.winner = "p1";
-      }
-    }
+    b.phaseTextKey = Math.random();    
     return b;
   };
 
@@ -2072,61 +2222,43 @@ export default function App() {
       return () => clearTimeout(t);
     }
 
-    if (battle.seq === "impact") {
-      let nextB = processImpact(cloneBattle(battle));
-      setBattle(nextB);
+    // ★ ここから
+  if (battle.seq === "impact") {
+    let nextB = processImpact(cloneBattle(battle));
+    setBattle(nextB);
+    const t = setTimeout(() => {
+      setBattle((prev) => {
+        if (!prev) return null;
+        let endB = cloneBattle(prev);
+        endB.seq = "idle";
+        endB.shake = false;
+        endB.damageText = null;
+        if (endB.winner) return endB;
 
-      const t = setTimeout(() => {
-        setBattle((prev) => {
-          if (!prev) return null;
-          let endB = cloneBattle(prev);
-          endB.seq = "idle";
-          endB.shake = false;
-          endB.damageText = null;
-          endB.isSmashingFace = false;
-          endB.isSmashingEnemy = false;
-          endB.actionCard = null;
-          const resultB = handlePhaseEnd(endB);
-          syncBattleToFirebase(resultB);
-          return resultB;
-        });
-      }, 2500);
-      return () => clearTimeout(t);
-    }
+        // =========================================================
+        // ★ 修正ポイント：二回行動のストッパーをここに入れる！
+        // 現在操作しているプレイヤー（activePlayer）にバフが残っているか確認
+        // =========================================================
+        const pKey = endB.activePlayer; 
+        if (endB[pKey] && endB[pKey].buffs.doubleAction > 0) {
+          // バフが残っている場合は、フェーズを進めずに（idle状態で）待つ
+          syncBattleToFirebase(endB);
+          return endB; 
+        }
+
+        // バフが無い場合は、これまで通り次のフェーズへ進行する
+        const resultB = handlePhaseEnd(endB);
+        syncBattleToFirebase(resultB);
+        return resultB;
+      });
+    }, 1500);
+    return () => clearTimeout(t);
+  }
+  // ★ ここまで
   }, [battle?.seq]);
 
   // Result Screen Transition & Endless Ranking Save
-  useEffect(() => {
-    if (battle?.winner && battle.winner !== "next_stage") {
-      const saveRanking = async () => {
-        if (battle.mode === "endless" && !isHost) {
-          const playerName = prompt(
-            "エンドレスモード終了！ランキングに登録する名前を入力してください:",
-            "Player"
-          );
-          if (playerName) {
-            await push(ref(db, "rankings"), {
-              name: playerName,
-              level: battle.endlessLevel,
-              timestamp: Date.now(),
-            });
-          }
-        }
-      };
-
-      const t = setTimeout(async () => {
-        await saveRanking();
-        setResultData({
-          winner: battle.winner,
-          mode: battle.mode,
-          level: battle.endlessLevel,
-        });
-        setScreen("result");
-        if (mode === "pvp" && roomId) remove(ref(db, `rooms/${roomId}`));
-      }, 2000);
-      return () => clearTimeout(t);
-    }
-  }, [battle?.winner, battle?.mode, battle?.endlessLevel]);
+  
 
   // Timer countdown
   useEffect(() => {
@@ -2179,6 +2311,9 @@ export default function App() {
     const b = battle;
     const pKey = b.activePlayer;
 
+    // --------------------------------------------------------
+    // ▼ CPU（p2）の処理
+    // --------------------------------------------------------
     if ((b.mode === "cpu" || b.mode === "endless") && pKey === "p2") {
       clearTimeout(cpuTimer.current);
       cpuTimer.current = setTimeout(() => {
@@ -2188,34 +2323,164 @@ export default function App() {
         const specialCards = playable.filter((c) => c.card.type === "special");
         const specificCards = playable.filter((c) => c.card.type !== "special");
 
-        if (!b.usedCardThisPhase.special && specialCards.length > 0)
+        // ★修正ポイント：CPUも特殊カードを何枚でも使えるように制限を削除！
+        if (specialCards.length > 0) {
           startActionSequence("p2", specialCards[0].idx);
-        else if (!b.usedCardThisPhase.specific && specificCards.length > 0)
+        } else if (!b.usedCardThisPhase.specific && specificCards.length > 0) {
           startActionSequence("p2", specificCards[0].idx);
-        else startActionSequence("p2", null);
+        } else {
+          startActionSequence("p2", null); // 出せるカードがないのでパス
+        }
       }, 1500);
       return;
     }
 
-    if ((b.mode === "cpu" || b.mode === "endless") && pKey === "p1") {
-      const canPlaySpecific = b[pKey].hand.some(
-        (c) => canPlayCard(b, pKey, c) && c.type !== "special"
-      );
-      const canPlaySpecial = b[pKey].hand.some(
-        (c) => canPlayCard(b, pKey, c) && c.type === "special"
-      );
-
-      if (
-        (!canPlaySpecific && !canPlaySpecial) ||
-        (b.usedCardThisPhase.specific && !canPlaySpecial)
-      ) {
-        const t = setTimeout(() => startActionSequence(pKey, null), 1200);
-        return () => clearTimeout(t);
-      }
-    }
+    // --------------------------------------------------------
+    // ▼ プレイヤー（p1）の自動スキップ処理
+    // --------------------------------------------------------
+    
   }, [battle, dragInfo, startupPhase, battle?.seq]);
+  // =========================================================
+  // ★ 復活：勝敗が決まった時にリザルト画面（スコア送信画面）へ移行する処理
+  // =========================================================
+  // =========================================================
+  // ★ 修正：勝敗が決まった時に結果データを保存してリザルト画面へ
+  // =========================================================
+  // =========================================================
+  // ① 勝敗が決まった時に結果データを保存してリザルト画面へ（これだけにします）
+  // =========================================================
+  useEffect(() => {
+    if (battle?.winner && battle.winner !== "next_stage") {
+      const timer = setTimeout(() => {
+        if (typeof setResultData === "function") {
+          setResultData(battle);
+        }
+        setScreen("result"); 
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [battle?.winner]);
+
+  // =========================================================
+  // ② Firebaseへのスコア送信関数（独立して配置）
+  // =========================================================
+  const handleScoreSubmit = async (playerName, level) => {
+    try {
+      const rankingsRef = ref(db, "rankings"); 
+      await push(rankingsRef, {
+        name: playerName,
+        level: level,
+        timestamp: Date.now(),
+      });
+      console.log("スコア送信完了！");
+    } catch (error) {
+      console.error("スコアの送信に失敗しました:", error);
+      alert("送信エラーが発生しました: " + error.message);
+    }
+  };
+
+// =========================================================
+  // ★ 修正決定版：バフの初期化による NaN エラーを防ぐリセット処理
+  // =========================================================
+ // =========================================================
+  // ★ 修正決定版：手札のシャッフル ＆ 敵のステータスレベルアップ追加
+  // =========================================================
+  useEffect(() => {
+    if (battle?.winner === "next_stage") {
+      const timer = setTimeout(() => {
+        setBattle((prev) => {
+          if (!prev) return null;
+          let nb = cloneBattle(prev);
+
+          // 1. 確実にカードをかき混ぜるシャッフル関数
+          const shuffleArray = (array) => {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+          };
+
+          // 2. レベル更新 ＆ ステータス強化処理！
+          const nextLevel = (nb.endlessLevel || 1) + 1;
+          const p2NewStats = { ...nb.p2.stats }; 
+          
+          // ★ 修正ポイント：数値のステータスをすべて自動的に＋1して強くする
+          for (const key in p2NewStats) {
+            if (typeof p2NewStats[key] === "number") {
+              p2NewStats[key] += 1; // ステータスが1ずつ上がります（一気に強くしたい場合は 2 などにしてください）
+            }
+          }
+
+          // 3. バトルの進行状態をリセット
+          nb.winner = null;
+          nb.endlessLevel = nextLevel;
+          nb.currentPhase = "serve";
+          nb.serverSide = "p1"; 
+          nb.activePlayer = "p1";
+          nb.turn = 1;
+          nb.seq = "idle";
+          nb.ballPos = "p1-server";
+          nb.ballTrajectory = "none";
+          nb.usedCardThisPhase = { specific: false, special: false };
+          nb.skipToNextTurn = false;
+          nb.scheduledDamage = 0;
+
+          // 4. バフの安全な初期化
+          const initialBuffs = {
+            manaDiscount: 0,
+            manaCostUp: 0,
+            doubleAction: 0,
+          };
+
+          // 5. プレイヤー（p1）のリセット
+          const allP1Cards = [...nb.p1.deck, ...nb.p1.hand, ...nb.p1.discard];
+          nb.p1 = {
+            ...nb.p1,
+            hp: 150,      
+            mana: 1,      
+            deck: shuffleArray(allP1Cards),
+            hand: [],     
+            discard: [],  
+            buffs: { ...nb.p1.buffs, ...initialBuffs },
+          };
+
+          // 6. 敵（p2）のリセット
+          const allP2Cards = [...nb.p2.deck, ...nb.p2.hand, ...nb.p2.discard];
+          nb.p2 = {
+            ...nb.p2,
+            hp: 150,      
+            mana: 1,      
+            stats: p2NewStats, // ★ 強化されたステータスを適用！
+            deck: shuffleArray(allP2Cards),
+            hand: [],     
+            discard: [],
+            buffs: { ...nb.p2.buffs, ...initialBuffs },
+          };
+
+          // 7. 手札を5枚引き直す
+          if (typeof drawCard === "function") {
+            drawCard(nb, "p1", 5);
+            drawCard(nb, "p2", 5);
+          } else {
+            nb.p1.hand = nb.p1.deck.slice(0, 5);
+            nb.p1.deck = nb.p1.deck.slice(5);
+            nb.p2.hand = nb.p2.deck.slice(0, 5);
+            nb.p2.deck = nb.p2.deck.slice(5);
+          }
+
+          return nb;
+        });
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [battle?.winner]);
 
   // --- Handlers ---
+
   const handlePointerDown = (e, index, pKey, card) => {
     if (mode === "pvp") {
       if ((isHost && pKey !== "p1") || (!isHost && pKey !== "p2")) return;
@@ -2337,8 +2602,15 @@ export default function App() {
       </>
     );
 
-  if (screen === "result")
-    return <ResultScreen data={resultData} onBack={() => setScreen("menu")} />;
+    if (screen === "result") {
+      return (
+        <ResultScreen 
+          data={resultData} 
+          onBack={() => setScreen("menu")} 
+          onSubmitScore={handleScoreSubmit} // ★これを絶対に書いてください！
+        />
+      );
+    }
 
   // --- Render Battle Screen ---
   if (screen === "battle" && battle) {
@@ -2346,7 +2618,7 @@ export default function App() {
     const pBot = isHost ? "p1" : "p2";
     const getPlayerHandStyle = (index, total) => {
       if (total <= 1) return { transform: "translate(-50%, 0px)" };
-      const maxSpread = Math.min(window.innerWidth * 0.85, total * 25);
+      const maxSpread = Math.min(window.innerWidth * 0.75, total * 25);
       const maxAngle = Math.min(25, total * 4);
       const stepX = maxSpread / (total - 1);
       const stepAngle = (maxAngle * 2) / (total - 1);
