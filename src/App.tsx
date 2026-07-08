@@ -2081,8 +2081,8 @@ export default function App() {
 
     if (b.winner) return b; // 念のためのストッパー
     b.usedCardThisPhase = { specific: false, special: false };
-    b.p1.buffs.manaDiscount = 0;
-    b.p2.buffs.manaDiscount = 0;
+    //b.p1.buffs.manaDiscount = 0;
+    //b.p2.buffs.manaDiscount = 0;
     b.p1.buffs.doubleAction = 0; // ★追加
     b.p2.buffs.doubleAction = 0; // ★追加
     const oppKey = b.serverSide === "p1" ? "p2" : "p1";
