@@ -2495,7 +2495,7 @@ export default function App() {
           nb.p2 = {
             ...nb.p2,
             hp: 150,
-            mana: 1,
+            mana: 0,
             stats: p2NewStats,
             deck: shuffleArray(allP2Cards),
             hand: [],
